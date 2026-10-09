@@ -28,8 +28,12 @@ RV_ACCUM_MINUTES = 5
 RV_DEFAULT_GAIN = 0.01
 RV_DEFAULT_NODATA = 65535
 
-# Ab dieser Gesamtsumme (mm) wird etwas gezeichnet, darunter transparent
-MIN_VISIBLE_MM = 0.1
+# Die Farbtabelle ist in mm/h definiert. Die Daten sind mm pro 5 min (bzw. deren Summe),
+# daher werden alle Schwellen durch 12 geteilt.
+RATE_TO_5MIN = 1 / 12
+
+# Sichtbar ab der untersten Stufe (0.1 mm/h = 0.0083 mm)
+MIN_VISIBLE_MM = 0.1 * RATE_TO_5MIN
 
 # Farbtabelle: (mm, (R, G, B)) - jetzt auf die SUMME ueber 0-120 min angewendet.
 # Diskrete Stufen: jeder Wert bekommt die Farbe der letzten Schwelle <= Wert.
@@ -365,7 +369,7 @@ def nearest_neighbor_warp(
 # --------------------------------------------------------------------------- #
 def colorize(total_mm: np.ndarray) -> np.ndarray:
     """Summe in mm -> RGBA: unter MIN_VISIBLE_MM transparent, darüber diskrete Farbstufen."""
-    thresholds = np.array([t for t, _ in COLOR_TABLE], dtype=np.float64)
+    thresholds = np.array([t for t, _ in COLOR_TABLE], dtype=np.float64) * RATE_TO_5MIN
     colors = np.array([c for _, c in COLOR_TABLE], dtype=np.uint8)   # (N, 3)
 
     rgba = np.zeros((*total_mm.shape, 4), dtype=np.uint8)
