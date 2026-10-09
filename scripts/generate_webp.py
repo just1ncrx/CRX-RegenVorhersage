@@ -21,7 +21,7 @@ FILENAME_RE = re.compile(r"composite_rv_(\d{8})_(\d{4})_(\d{3})-hd5")
 
 # Vorhersageschritte, die aufsummiert werden (Minuten, inklusive)
 LEAD_MIN_START = 0
-LEAD_MIN_END = 120
+LEAD_MIN_END = 30
 
 # RV = 5-Minuten-Produkt
 RV_ACCUM_MINUTES = 5
